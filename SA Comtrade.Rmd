@@ -1,0 +1,166 @@
+---
+title: "Saudi Arabia Trade, 2015-2019"
+runtime: shiny
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    theme: readable
+    source_code: embed
+    social: menu
+    navbar:
+      - {title: "UN Comtrade", href: "https://comtrade.un.org/data/", icon: "far fa-clipboard"}
+
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(readxl)
+library(ggrepel)
+
+#data
+trade_all = as.data.frame(read_excel("Trade by Country (2015-2019).xlsx"))
+
+
+ #[1] generate new variables
+      trade_all$tvalue = trade_all$mvalue + trade_all$xvalue    # trade value = exports + imports
+      
+      #[2] loop generation of variables
+      logvar = c("tvalue","mvalue","xvalue","dist","pop_d","gdp_d")
+  
+      for (i in 1:length(logvar)) {
+        tcol = paste("log.",logvar[i], sep = "") # to store column name for each iteration
+        trade_all[[tcol]] = log(trade_all[[logvar[i]]]) # to create new column based on formula
+      }
+
+      #[3] rename
+      trade_all = rename(trade_all, log_trade_value=log.tvalue, log_distance=log.dist, 
+                         log_gdp_dest=log.gdp_d, log_exports=log.xvalue)
+
+      #[4] remove NA
+      trade_all = na.omit(trade_all)
+
+      #[5] make year as factor
+      trade_all$year = as.factor(trade_all$year)
+
+```
+
+
+Input {.sidebar data-width=250}
+-----------------------------------------------------------------------
+
+Does SA’s trade value with its trade partner increase with the size of the economy?
+
+```{r}
+
+vars = c("log_trade_value","log_distance","log_gdp_dest", "log_exports")
+
+#input
+
+#dropdown years
+selectInput(inputId='year', label='Select year',
+            choices=unique(trade_all$year), '2019')
+
+#dropdown variables
+selectInput(inputId='tradehist', label='Choose a variable',
+            choices=vars)
+
+#optional trend line
+checkboxInput('trendline', 'Add trend line to Figure 1', value = TRUE)
+
+
+#bins
+sliderInput(inputId='Breaks', label='Histogram number of breaks',
+            min=5, max=50, value=30)
+
+```
+
+
+
+Figure 1 suggests that the log of SA’s trade value increases with the log of GDP of SA’s partner countries.
+
+
+
+
+In general, larger nodes are located at the Northeast portion of the charts. This indicates that economies with larger population ('000) also have larger trade value with Saudi Arabia. 
+
+
+Outputs
+-----------------------------------------------------------------------
+
+### Figure 1
+
+```{r fig1}
+
+# Copy from line 106 to 131 of Day 2 codes and make the plot interactive
+
+#make dataset reactive
+dataset = reactive({
+  trade_all %>% filter(year == input$year) 
+})
+
+#make a reactive plot, change y, x, make trend line optional
+renderPlot({  
+  p = ggplot(dataset(), aes_string(y=input$tradehist, x ='log_gdp_dest', color='mus_d', size='pop_d')) + geom_point() +
+                          labs(color = "% Share of Muslim",
+                               size = "Population ('000)",
+                               title = "Trade and GDP by partner country",
+                               subtitle = "by share of Muslim population and by total population",
+                               x = "log of GDP (partner country)",
+                               y = input$tradehist,
+                               caption = "Sources: UN ComTrade and CEPII Gravity database.") +
+                          theme_classic() +
+                          theme(plot.caption = element_text(hjust=0, size=8),
+                                plot.title = element_text(hjust = 0, size=12, face="bold"),
+                                axis.title.x = element_text(size=10),
+                                axis.title.y = element_text(size=10)
+                                )
+  
+   if (input$trendline)   #make trend line optional
+    p <- p + geom_smooth(method = "lm", se = TRUE, linetype = "dashed", size=.5, color="darkblue") 
+  
+  # [8] Label all countries using geom_text_repel and "iso3" as labels #
+        p + geom_text_repel(aes(label = `iso3`), size = 2)
+
+  # [9] Label select countries: China, USA, UAE, and Qatar #
+        p1 = p + annotate("text", x = 19.8, y = 24.1, label = "ARE") +
+                      annotate("text", x = 18.9, y = 9.8, label = "QAT") +
+                      annotate("text", x = 23.7, y = 25.1, label = "CHN") +
+                      annotate("text", x = 23.9, y = 22.7, label = "USA") 
+  
+  print(p1)
+  
+}, res=100)  #adjust width, height, resolution
+
+```  
+
+
+>Reference: Alvarez, J. (2021) *R Graphics* [PowerPoint Presentation]. Presented during ADB's R, R Markdown and LaTeX Training. Data sources: UN ComTrade and CEPII Gravity database.
+
+Outputs {data-width=350}
+-----------------------------------------------------------------------
+
+### Histogram
+
+```{r hist}
+#Make line 35 to 38 of Day 2 interactive, which changes depending on the variable
+
+renderPlot(hist(dataset()[, input$tradehist], breaks=input$Breaks, 
+                main = "Histogram", xlab=input$tradehist, col='grey')
+          )
+
+```
+
+
+### Scatterplot
+
+```{r plot}
+#Make line 40 to 43 of Day 2 interactive, 
+# set y changing depending on var chosen, set x = log of GDP (partner country) 
+
+renderPlot(plot(dataset()[,'log_gdp_dest'], dataset()[, input$tradehist], 
+                main="Scatterplot", xlab="log_gdp_dest", ylab=input$tradehist ))
+
+```
+

@@ -1,0 +1,131 @@
+---
+title: "Credit Card Customers Data Dashboard"
+runtime: shiny
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: fill
+    theme: readable
+    source_code: embed
+    social: menu
+    navbar:
+      - {title: "Data source", href: "https://www.kaggle.com/sakshigoyal7/credit-card-customers", icon: "far fa-clipboard"}
+
+---
+
+```{r global, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(viridis)
+library(hrbrthemes)
+library(DT)
+library(plotly)
+
+data = read.csv("BankChurners.csv")
+
+Categorical.Variables = c("Gender", "Education_Level", "Marital_Status")
+
+Numeric.Variables = c("Customer_Age", "Total_Trans_Ct", "Credit_Limit")
+
+Select.Vars= c("CLIENTNUM", "Attrition_Flag", "Gender", "Education_Level", 
+         "Marital_Status","Customer_Age", "Total_Trans_Ct", "Credit_Limit")
+
+data2 = data %>% select(Select.Vars)
+
+theme = theme_ipsum() + theme(plot.caption = element_text(hjust=0, size=8),
+                                plot.title = element_text(hjust = 0, size=12, 
+                                                          face="bold"),
+                                axis.title.x = element_text(size=10),
+                                axis.title.y = element_text(size=10))  
+                                
+```
+
+# Graphs
+
+Column {.sidebar data-width=300}
+-------------------------------------------------------------------
+**Data description**
+
+This dataset consists of 10,000 customers mentioning their age, salary, marital_status, credit card limit, credit card category, among others.
+
+Reference: [Berishvili, N. 2020](https://towardsdatascience.com/create-an-interactive-dashboard-with-shiny-flexdashboard-and-plotly-b1f025aebc9c)
+
+```{r input}
+
+selectInput(inputId="categorical_variable", label = "Select Categorical Variable:", 
+            choices = Categorical.Variables, selected = Categorical.Variables[2])
+
+selectInput(inputId="numeric_variable", label = "Select Numeric Variable:", 
+            choices = Numeric.Variables, selected = Numeric.Variables[2])
+
+sliderInput(inputId="bw_adjust", label ="Density plot bandwidth adjustment:",
+            min =0.2, max=2, value=1, step=0.2)
+
+```
+
+Row 
+-------------------------------------------------------------------
+
+### **Density plot** 
+```{r density}
+renderPlotly({
+  p1 = ggplot(data, aes_string(x=input$numeric_variable, fill=input$categorical_variable)) +
+   geom_density(alpha = 0.4, bw = input$bw_adjust) +
+    theme + scale_fill_viridis(discrete = T, alpha=0.8, option="A") 
+  
+  ggplotly(p1, res=100)
+
+})
+
+```
+
+
+
+
+Row 
+-------------------------------------------------------------------
+
+### **Box plot** 
+```{r boxplot}
+renderPlot({
+  
+  p = ggplot(data, aes_string(x = input$numeric_variable, 
+                              y = input$categorical_variable,  
+                              fill = input$categorical_variable)) +
+    geom_boxplot() + 
+             scale_fill_viridis(discrete = T, alpha=0.4, option="A") +
+              theme 
+  
+  print(p)
+
+}, res=100)
+```
+
+
+### **Bar chart** 
+```{r bar}
+renderPlot({
+  p2 = ggplot(data, aes_string( x = input$categorical_variable, 
+                                fill=input$categorical_variable)) +
+    geom_bar() +  theme + theme(axis.text.x=element_blank()) + 
+    scale_fill_viridis(discrete = T, alpha=0.4, option="A") 
+  
+  print(p2)
+}, res=100)
+```
+
+# Table
+```{r table}
+renderDT(
+  data2,
+    filter = "top",server = FALSE,
+    extensions = c('Buttons', 'Scroller'),
+      options = list(
+        dom = 'Blfrtip',
+        buttons = c('csv', 'excel', 'pdf'),
+        scrollY = '600px',
+        scroller = TRUE
+        )
+    )
+```
+
