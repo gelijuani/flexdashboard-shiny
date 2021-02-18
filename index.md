@@ -1,37 +1,19 @@
-## Welcome to GitHub Pages
+# Interactive dashboards: flexdashboard and shiny
+Interactive dashboards using flexdashboard and shiny in R Markdown
 
-You can use the [editor on GitHub](https://github.com/gelijuani/flexdashboard-shiny/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+This is an online repository of codes and datasets for sample dynamic dashboards. Feel free to suggest improvements. I did this for an R Markdown training that my workmates and I conducted in February 2021. 
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+*Saudi Arabia's 2015-2019 Trade Dashboard*
 
-### Markdown
+I made an interactive dashboard out of Saudi Arabia's UN Comtrade data for 2015-2019. The dashboard can be viewed [here](https://gelijuani.shinyapps.io/sa_comtrade/).
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+*Credit Card Customers Data Dashboard*
 
-```markdown
-Syntax highlighted code block
+I also made an interactive dashboard out of credit card customers' data. 
+This was inspired by this [article](https://towardsdatascience.com/create-an-interactive-dashboard-with-shiny-flexdashboard-and-plotly-b1f025aebc9c) and I just added a second page to make an interactive data table that the users can download. The dataset is from Kaggle.  
+The dashboard can be viewed [here.](https://gelijuani.shinyapps.io/credit/)
 
-# Header 1
-## Header 2
-### Header 3
 
-- Bulleted
-- List
+<img width="1436" alt="Screen Shot 2021-02-18 at 1 37 13 PM" src="https://user-images.githubusercontent.com/71627874/108310948-3c6f9480-71ef-11eb-81b0-652fa949d7c7.png">
 
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/gelijuani/flexdashboard-shiny/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+<img width="1440" alt="Screen Shot 2021-02-18 at 1 55 01 PM" src="https://user-images.githubusercontent.com/71627874/108312040-06331480-71f1-11eb-92fa-ed9ad48129fc.png">
