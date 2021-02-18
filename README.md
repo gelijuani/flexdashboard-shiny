@@ -1,4 +1,4 @@
-# flex-shiny
+# Interactive dashboards: flexdashboard and shiny
 Interactive dashboards using flexdashboard and shiny in R Markdown
 
 This is an online repository of codes and datasets for sample dynamic dashboards. I did this for an R Markdown training that my work colleagues and I conducted in February 2021. 
