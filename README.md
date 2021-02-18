@@ -13,6 +13,8 @@ This was inspired by this [article](https://towardsdatascience.com/create-an-int
 The dashboard can be viewed [here.](https://gelijuani.shinyapps.io/credit/)
 
 
+<img width="1440" alt="Screen Shot 2021-02-18 at 1 55 01 PM" src="https://user-images.githubusercontent.com/71627874/108312040-06331480-71f1-11eb-92fa-ed9ad48129fc.png">
+
 <img width="1436" alt="Screen Shot 2021-02-18 at 1 37 13 PM" src="https://user-images.githubusercontent.com/71627874/108310948-3c6f9480-71ef-11eb-81b0-652fa949d7c7.png">
 
-<img width="1440" alt="Screen Shot 2021-02-18 at 1 55 01 PM" src="https://user-images.githubusercontent.com/71627874/108312040-06331480-71f1-11eb-92fa-ed9ad48129fc.png">
+
